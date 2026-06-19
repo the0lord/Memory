@@ -1,0 +1,16 @@
+# secrets — never commit
+.env
+*.env
+!.env.example
+
+# learned AI state — machine-specific, regenerates each run
+state.json
+
+# local scratch solution store (the real shared store lives at SOLMEM_HOME)
+solmem_store/
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
