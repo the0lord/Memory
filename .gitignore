@@ -14,3 +14,13 @@ __pycache__/
 *.py[cod]
 .venv/
 venv/
+
+# local-only docs and solmem — not tracked in git
+README.md
+BLEEDING_EDGE.md
+SOLMEM.md
+
+# local docs
+DEPLOY.md
+
+

@@ -51,6 +51,9 @@ class Store:
         for d in (self.records_dir, self.recalls_dir, self.versions_dir, self.audit_dir):
             d.mkdir(parents=True, exist_ok=True)
         self.git = git and self._is_git_repo()
+        # Set per-request by the HTTP transport so a hosted server attributes each
+        # record to the calling developer (resolved from their token), not the host.
+        self.request_author: str | None = None
 
     # -- records --------------------------------------------------------
     def _path(self, rec_id: str) -> Path:
@@ -288,8 +291,11 @@ class Store:
 
     def current_author(self) -> str:
         """Best-effort identity for provenance, stamped on every record so recall
-        can show who a memory came from (OWASP ASI06). SOLMEM_AUTHOR env wins, else
-        git user.name, else 'unknown'."""
+        can show who a memory came from (OWASP ASI06). A per-request author (set by
+        the HTTP transport from the caller's token) wins, else SOLMEM_AUTHOR env,
+        else git user.name, else 'unknown'."""
+        if self.request_author:
+            return self.request_author
         a = os.environ.get("SOLMEM_AUTHOR")
         if a and a.strip():
             return a.strip()

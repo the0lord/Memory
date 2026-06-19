@@ -1,0 +1,14 @@
+.git/
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+solmem_store/
+state.json
+*.md
+test_*.py
+demo_*.py
+bench_*.py
+.env
+*.env
+.claude/
