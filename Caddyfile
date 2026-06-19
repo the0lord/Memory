@@ -1,0 +1,6 @@
+# Auto-HTTPS in front of solmem. Caddy fetches & renews a Let's Encrypt cert for
+# $SOLMEM_DOMAIN automatically — no manual certs. Requires: the domain's DNS points
+# at this host, and ports 80 + 443 are open.
+{$SOLMEM_DOMAIN} {
+	reverse_proxy solmem:8730
+}

@@ -88,6 +88,11 @@ class _Handler(BaseHTTPRequestHandler):
         return self._json(405, {"error": "method not allowed"})
 
     def do_POST(self) -> None:
+        # Drain the request body FIRST, always — otherwise an early return (401/404)
+        # leaves it in the socket and the next keep-alive request desyncs into a 400.
+        length = int(self.headers.get("Content-Length", 0) or 0)
+        raw = self.rfile.read(length) if length else b""
+
         if self.path.rstrip("/") not in ("/mcp", ""):
             return self._json(404, {"error": "not found"})
 
@@ -99,8 +104,6 @@ class _Handler(BaseHTTPRequestHandler):
             self.end_headers()
             return
 
-        length = int(self.headers.get("Content-Length", 0) or 0)
-        raw = self.rfile.read(length) if length else b""
         try:
             msg = json.loads(raw.decode("utf-8"))
         except (ValueError, UnicodeDecodeError):

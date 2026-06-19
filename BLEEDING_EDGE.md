@@ -20,7 +20,7 @@
 
 - **"Minimal physicalism as a scale-free substrate for cognition and consciousness"** (2021, 87 citations). Scale-free = substrate-independent. Formal argument.
 
-- **"Neurophenomenal structuralism"** (2022, 30 citations). Consciousness as geometric structure. Connects to Lyra's Layer 14 presence topology.
+- **"Neurophenomenal structuralism"** (2022, 30 citations). Consciousness as geometric structure.
 
 - **Tamietto & de Gelder 2010** — Neural bases of non-conscious emotional perception (doi:10.1038/nrn2889). 1,047 citations. Emotion processing below awareness threshold.
 

@@ -88,6 +88,21 @@ def main() -> None:
         assert app.store.get(rid).author == "alice", app.store.get(rid).author
         print("provenance       -> record by alice-tok attributed to 'alice'")
 
+        # 5b. keep-alive: a 401 must not desync the connection — a valid request
+        #     reusing the same socket must still succeed (body-drain regression).
+        import http.client
+        conn = http.client.HTTPConnection("127.0.0.1", port, timeout=5)
+        conn.request("POST", "/mcp", body=json.dumps(
+            {"jsonrpc": "2.0", "id": 1, "method": "tools/list"}))  # no auth
+        assert conn.getresponse().read() is not None  # drains the 401
+        conn.request("POST", "/mcp",
+                     body=json.dumps({"jsonrpc": "2.0", "id": 2, "method": "ping"}),
+                     headers={"Authorization": "Bearer alice-tok"})
+        r2 = conn.getresponse()
+        assert r2.status == 200, r2.status
+        conn.close()
+        print("keep-alive       -> 401 then 200 on the same connection (no desync)")
+
         # 6. admin gating: non-admin cannot evolve; admin can
         denied = call(port, "evolve", {}, token="alice-tok")
         assert "admin-only" in denied, denied

@@ -1,0 +1,38 @@
+# Hosted solmem WITH automatic HTTPS (use this when devs connect over the internet).
+# Caddy terminates TLS and proxies to solmem, which is NOT exposed to the host.
+#
+#   SOLMEM_DOMAIN=memory.yourco.com SOLMEM_TOKENS='dev1=alice,dev2=bob' \
+#   SOLMEM_ADMIN_TOKENS='ops=boss' docker compose -f docker-compose.https.yml up -d --build
+#
+# Endpoint becomes:  https://memory.yourco.com/mcp
+services:
+  solmem:
+    build: .
+    environment:
+      SOLMEM_TOKENS: ${SOLMEM_TOKENS:?set SOLMEM_TOKENS, e.g. 'dev1=alice,dev2=bob'}
+      SOLMEM_ADMIN_TOKENS: ${SOLMEM_ADMIN_TOKENS:-}
+      MISTRAL_API_KEY: ${MISTRAL_API_KEY:-}
+    volumes:
+      - solmem-data:/data
+    restart: unless-stopped
+    # no host ports: only reachable via caddy on the internal compose network
+
+  caddy:
+    image: caddy:2
+    depends_on:
+      - solmem
+    ports:
+      - "80:80"        # ACME challenge + HTTP->HTTPS redirect
+      - "443:443"      # HTTPS
+    environment:
+      SOLMEM_DOMAIN: ${SOLMEM_DOMAIN:?set SOLMEM_DOMAIN, e.g. memory.yourco.com}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data      # persists the issued certificates
+      - caddy-config:/config
+    restart: unless-stopped
+
+volumes:
+  solmem-data:
+  caddy-data:
+  caddy-config:
