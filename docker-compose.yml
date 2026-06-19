@@ -9,8 +9,8 @@ services:
       # tunnel. Change to "8730:8730" only if you intend a direct public listener.
       - "127.0.0.1:8730:8730"
     environment:
-      # required: per-developer tokens (token=author), comma-separated
-      SOLMEM_TOKENS: ${SOLMEM_TOKENS:?set SOLMEM_TOKENS in .env, e.g. 'dev1=alice,dev2=bob'}
+      # required: per-developer tokens as name=token, comma-separated
+      SOLMEM_TOKENS: ${SOLMEM_TOKENS:?set SOLMEM_TOKENS in .env, e.g. 'alice=<token>,bob=<token>'}
       # optional: tokens allowed to evolve / rollback the shared brain
       SOLMEM_ADMIN_TOKENS: ${SOLMEM_ADMIN_TOKENS:-}
       # optional: enables semantic recall (embeddings) server-side

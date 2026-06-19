@@ -32,14 +32,19 @@ ADMIN_TOOLS = {"evolve", "rollback_brain"}
 
 
 def _parse_token_map(raw: str) -> dict[str, str]:
-    """Parse 'tok=alice,tok2=bob' (or bare 'tok') into {token: author}."""
+    """Parse 'alice=tok,bob=tok2' (or a bare 'tok') into {token: author}.
+
+    Format is name=token — the developer's name on the left, their secret bearer
+    token on the right (the natural reading). A bare entry with no '=' is treated
+    as a token with author 'unknown'.
+    """
     out: dict[str, str] = {}
     for pair in raw.split(","):
         pair = pair.strip()
         if not pair:
             continue
         if "=" in pair:
-            tok, author = pair.split("=", 1)
+            author, tok = pair.split("=", 1)
             out[tok.strip()] = author.strip() or "unknown"
         else:
             out[pair] = "unknown"
